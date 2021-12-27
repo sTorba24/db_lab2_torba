@@ -6,13 +6,13 @@ SELECT ins_charge,hum_name
 FROM insuranse INNER JOIN humans ON insuranse.hum_id = humans.hum_id
 '''
 query_2 = '''
-SELECT hum_smoker,COUNT(*)
-FROM humans 
-GROUP BY hum_smoker
+SELECT isSmoker,COUNT(*)
+FROM smokers 
+GROUP BY isSmoker
 '''
 
 query_3 = '''
-SELECT ins_charge,hum_age 
+SELECT ins_charge,hum_age
 FROM insuranse INNER JOIN humans ON insuranse.hum_id = humans.hum_id
 '''
 
@@ -31,16 +31,22 @@ def connect():
         with conn:
             cur = conn.cursor()
 
-            print('Query 1:')
             cur.execute(query_1)
-            values = []
-            names = []
-            for row in cur:
-                print(row)
-                values.append(row[0])
-                names.append(row[1])
+
+            data_to_visualise = {}
             
-            fig1 = plt.bar(names, values,width = 0.7)
+            for row in cur:
+                data_to_visualise[row[1]] = row[0]
+            print(data_to_visualise)
+            x_range = range(len(data_to_visualise.keys()))
+        
+            figure, bar_ax = plt.subplots()
+            bar = bar_ax.bar(x_range, data_to_visualise.values(), label='Total')
+            bar_ax.set_title('Charge for every human')
+            bar_ax.set_xlabel('Human')
+            bar_ax.set_ylabel('Charge')
+            bar_ax.set_xticks(x_range)
+            bar_ax.set_xticklabels(data_to_visualise.keys())
 
             print('\nQuery 2:')
             cur.execute(query_2)
@@ -54,26 +60,32 @@ def connect():
             fig2, ax = plt.subplots()
             ax.pie(count, labels=smokes)
             ax.axis("equal")
-            
-            print('\nQuery 3:')
+
             cur.execute(query_3)
-            moneys=[]
-            ages=[]
+            data_to_visualise = {}
+
             for row in cur:
-                print(row)
-                moneys.append(row[0])
-                ages.append(row[1])
-            
-            fig3 = plt.bar(ages, moneys,width = 0.5)
+                data_to_visualise[row[1]] = row[0]
+
+            x_range = range(len(data_to_visualise.keys()))
         
-        cur.close()
+            figure, bar_ax = plt.subplots()
+            bar = bar_ax.bar(x_range, data_to_visualise.values(), label='Total')
+            bar_ax.set_title('Dependency charge from age')
+            bar_ax.set_xlabel('Human')
+            bar_ax.set_ylabel('Age')
+            bar_ax.set_xticks(x_range)
+            bar_ax.set_xticklabels(data_to_visualise.keys())
+
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
+        mng = plt.get_current_fig_manager()
+        mng.resize(1400, 600)
+
         plt.show()
         if conn is not None:
             conn.close()
             print('Database connection closed.')
 
 connect()
-plt.show()
