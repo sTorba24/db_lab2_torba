@@ -4,11 +4,23 @@ CREATE TABLE children (
 	PRIMARY KEY (child_id)
 );
 
+
+СREATE TABLE smokers (
+	smoker_id SERIAL,
+	isSmoker VARCHAR(40) NOT NULL,
+	smoker_date DATE,
+	hum_id INT NOT NULL,
+	PRIMARY KEY(smoker_id),
+	CONSTRAINT FK_human
+			FOREIGN KEY (hum_id)
+				REFERENCES humans (hum_id) ON DELETE CASCADE
+);
+
+
 CREATE TABLE humans (
   hum_id SERIAL,
   hum_name VARCHAR(40) NOT NULL,
   hum_age INT NOT NULL,
-  hum_smoker VARCHAR(40) NOT NULL,
   hum_sex VARCHAR(40) NOT NULL,
   child_id INT NOT NULL,
   PRIMARY KEY(hum_id),
@@ -27,3 +39,5 @@ CREATE TABLE insuranse (
 		FOREIGN KEY (hum_id)
 			REFERENCES humans (hum_id) ON DELETE CASCADE
 );
+
+
