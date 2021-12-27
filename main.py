@@ -5,9 +5,9 @@ SELECT ins_charge,hum_name
 FROM insuranse INNER JOIN humans ON insuranse.hum_id = humans.hum_id
 '''
 query_2 = '''
-SELECT hum_smoker,COUNT(*)
-FROM humans 
-GROUP BY hum_smoker
+SELECT isSmoker,COUNT(*)
+FROM smokers 
+GROUP BY isSmoker
 '''
 
 query_3 = '''
